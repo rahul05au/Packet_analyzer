@@ -1,0 +1,15 @@
+[BLOCKED_IPS]
+
+[BLOCKED_APPS]
+YouTube
+
+[BLOCKED_DOMAINS]
+*.youtube.com
+*.openai.com
+chat.openai.com
+chatgpt.com
+api.openai.com
+cdn.oaistatic.com
+auth.openai.com
+
+[BLOCKED_PORTS]

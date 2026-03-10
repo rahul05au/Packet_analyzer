@@ -1,0 +1,35 @@
+# Compiled Java class files
+**/*.class
+
+# Java build output
+PacketAnalyzerJava/out/
+PacketAnalyzerJava/build/
+PacketAnalyzerJava/target/
+PacketAnalyzerJava/bin/
+
+# Duplicate/backup folder
+PacketAnalyzerJava copy/
+
+# Large test PCAP files (keep small ones, ignore big ones > 1MB)
+test.pcap
+
+# Node.js
+PacketAnalyzerWeb/node_modules/
+PacketAnalyzerWeb/npm-debug.log*
+PacketAnalyzerWeb/.env
+
+# Temp output files
+out.txt
+output_temp.pcap
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

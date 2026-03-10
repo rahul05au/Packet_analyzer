@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Analyzer UI | Deep Packet Inspection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="glow-bg"></div>
+
+    <main class="container">
+        <!-- Header -->
+        <header class="header slide-down">
+            <h1><span class="gradient-text">Packet</span> Analyzer</h1>
+            <p>Next-Gen Deep Packet Inspection Engine</p>
+            <div class="header-nav">
+                <button id="btnNavUpload" class="nav-btn active">Analyze PCAP</button>
+                <button id="btnNavRules" class="nav-btn">Manage Rules</button>
+            </div>
+        </header>
+
+        <!-- Rules Configuration Area -->
+        <section id="rulesSection" class="rules-area hidden fade-in">
+            <div class="dashboard-header">
+                <h2>Blocking <span class="gradient-text">Rules</span></h2>
+                <button id="btnSaveRules" class="btn-primary">Save Rules</button>
+            </div>
+            <div class="rules-editor-container glass-panel">
+                <p class="subtitle mb-2">Edit the rules below. The DPI Engine will use these rules to block or drop
+                    traffic matching the criteria. Do not modify the section headers (e.g., [BLOCKED_DOMAINS]).</p>
+                <textarea id="rulesEditor" class="rules-textarea" spellcheck="false" autocomplete="off"></textarea>
+            </div>
+            <div id="rulesSaveSuccess" class="toast-message hidden">✅ Rules saved successfully! Re-upload your PCAP to
+                see new results.</div>
+        </section>
+
+        <!-- Upload Area -->
+        <section id="uploadSection" class="upload-area fade-in">
+            <div id="dropZone" class="drop-zone">
+                <div class="icon-wrap">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <h3>Drag & Drop your <span class="accent-color">.pcap</span> file here</h3>
+                <p>Or click to browse from your computer</p>
+                <input type="file" id="fileInput" accept=".pcap,.pcapng">
+            </div>
+
+            <!-- ── Live Loading State ── -->
+            <div id="loading" class="loading-state hidden">
+                <div class="spinner"></div>
+                <h2>Analyzing Packets...</h2>
+                <p id="loadingStatus">Running multi-threaded DPI engine</p>
+
+                <!-- Live packet counter -->
+                <div class="live-counter-wrap">
+                    <span class="live-dot"></span>
+                    <span>Live packets processed:</span>
+                    <strong id="livePacketCount">0</strong>
+                </div>
+
+                <!-- Live log feed -->
+                <div id="liveLog" class="live-log"></div>
+            </div>
+        </section>
+
+        <!-- Dashboard / Results -->
+        <section id="resultsSection" class="results-dashboard hidden fade-in">
+            <div class="dashboard-header">
+                <h2>Analysis <span class="gradient-text">Complete</span></h2>
+                <button id="btnNewScan" class="btn-primary">New Scan</button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+
+                <div class="stat-card glass-panel pop-in" style="--delay: 0.1s">
+                    <div class="stat-icon traffic-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Packets</h4>
+                        <span id="stat-total" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-panel pop-in" style="--delay: 0.2s">
+                    <div class="stat-icon lock-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Standard / TCP</h4>
+                        <span id="stat-tcp" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-panel pop-in" style="--delay: 0.3s">
+                    <div class="stat-icon bolt-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Fast / UDP</h4>
+                        <span id="stat-udp" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-panel pop-in shield-card" style="--delay: 0.4s">
+                    <div class="stat-icon shield-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Blocked / Dropped</h4>
+                        <span id="stat-blocked" class="stat-value">0</span>
+                        <span id="dropRate" class="drop-rate-badge">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lower-dashboard">
+                <!-- Applications Panel -->
+                <div class="apps-panel glass-panel pop-in" style="--delay: 0.5s">
+                    <h3>Identified Applications</h3>
+                    <p class="subtitle">Deep Packet Classification (SNI/DNS/HTTP)</p>
+                    <div id="appsList" class="apps-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Connection Summary Pane -->
+                <div class="summary-panel glass-panel pop-in" style="--delay: 0.6s">
+                    <h3>Connection Overview</h3>
+                    <div class="ring-chart-container">
+                        <div class="ring-chart">
+                            <svg viewBox="0 0 36 36">
+                                <path class="circle-bg"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle-fill" id="classifiedRing" stroke-dasharray="0, 100"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="ring-percentage">
+                                <span id="classifiedPercentage">0%</span>
+                                <small>Classified</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="summary-list">
+                        <li><span>Total Connections:</span> <b id="sum-total">0</b></li>
+                        <li><span>Successfully Classified:</span> <b id="sum-class" class="text-success">0</b></li>
+                        <li><span>Unidentified / Unknown:</span> <b id="sum-unk" class="text-dim">0</b></li>
+                        <li><span>Total Data Processed:</span> <b id="sum-bytes">0 B</b></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ── Live Packet Inspection Table ── -->
+            <div class="packet-table-panel glass-panel pop-in" style="--delay: 0.7s; margin-top: 1.5rem;">
+                <div class="packet-table-header">
+                    <div>
+                        <h3>Live Packet Inspection</h3>
+                        <p class="subtitle">Per-packet SNI · IP · App · Action — exactly as seen in the engine</p>
+                    </div>
+                    <div class="pkt-count-badge">
+                        <span id="pktTableCount">0</span> packets
+                    </div>
+                </div>
+                <div class="packet-table-wrap">
+                    <table class="packet-table" id="packetTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Source IP</th>
+                                <th>Destination IP</th>
+                                <th>Proto</th>
+                                <th>Port</th>
+                                <th>SNI / Domain</th>
+                                <th>App</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="packetTableBody">
+                            <!-- Populated live by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

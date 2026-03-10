@@ -1,0 +1,9 @@
+@echo off
+echo Starting Packet Analyzer Web UI...
+echo ====================================
+echo Make sure you have Node.js installed.
+echo Installing dependencies if needed...
+call npm install --no-audit >nul 2>&1
+echo Starting server...
+node server.js
+pause
