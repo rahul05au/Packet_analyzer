@@ -318,6 +318,8 @@ This creates several `.pcap` files simulating YouTube, ChatGPT, and other traffi
 
 **Rahul Kumar** — [github.com/rahul05au](https://github.com/rahul05au)
 
+See the full list of contributors in [CONTRIBUTORS.md](CONTRIBUTORS.md).
+
 ---
 
 ## 🤝 Contributing
