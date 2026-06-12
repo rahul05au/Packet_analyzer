@@ -339,3 +339,10 @@ Please make sure your code follows the existing style and includes appropriate d
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+## 🌟 Acknowledgements
+
+- Thanks to the open source community.
+- Built for educational purposes.
