@@ -33,3 +33,4 @@ output_temp.pcap
 .DS_Store
 Thumbs.db
 desktop.ini
+*.log
