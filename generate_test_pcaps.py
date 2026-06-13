@@ -8,6 +8,10 @@ Packet structure matches exactly what PacketParser.java / SniExtractor.java expe
   Ethernet (14 B) + IPv4 (20 B) + TCP/UDP (20/8 B) + Payload
 """
 
+#!/usr/bin/env python3
+"""
+Utility script to generate synthetic test PCAP files for Packet Analyzer.
+"""
 import struct, time, random, os
 
 OUT_DIR = r"C:\Users\rahul\Downloads\Packet_analyzer-main"
