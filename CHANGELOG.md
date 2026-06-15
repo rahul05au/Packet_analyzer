@@ -6,3 +6,5 @@
 - PacketAnalyzer Update 3: General improvements and minor fixes.
 
 - PacketAnalyzer Feature B Update 7.
+
+- PacketAnalyzer Feature B Update 8.
