@@ -182,6 +182,13 @@ app.post('/api/analyze-stream', upload.single('pcapFile'), (req, res) => {
     child.stdout.on('data', handleStream);
     child.stderr.on('data', handleStream);
 
+    req.on('close', () => {
+        if (!child.killed) {
+            console.log("Client disconnected early, killing Java process...");
+            child.kill();
+        }
+    });
+
     child.on('close', (code) => {
         // Flush remaining buffer
         if (lineBuffer.trim()) processLine(lineBuffer);
@@ -195,7 +202,7 @@ app.post('/api/analyze-stream', upload.single('pcapFile'), (req, res) => {
         if (fullOutput.includes('Total Packets:')) {
             const parsed = parseDpiOutput(fullOutput);
             sendEvent('done', { data: parsed });
-        } else {
+        } else if (!child.killed) {
             sendEvent('error', { message: 'DPI engine produced no valid output. Check that the PCAP file is valid and Java is installed.' });
         }
 
@@ -205,32 +212,6 @@ app.post('/api/analyze-stream', upload.single('pcapFile'), (req, res) => {
     child.on('error', (err) => {
         sendEvent('error', { message: 'Failed to start Java process: ' + err.message });
         res.end();
-    });
-});
-
-// Legacy non-streaming endpoint (kept for compatibility)
-app.post('/api/analyze', upload.single('pcapFile'), (req, res) => {
-    if (!req.file) return res.status(400).json({ error: 'No PCAP file uploaded' });
-
-    const inputPcap = req.file.path;
-    const outputPcap = path.join(__dirname, 'uploads', `out_${Date.now()}.pcap`);
-    const javaClasspath = path.join(__dirname, '..', 'PacketAnalyzerJava', 'out');
-    const command = `java -cp "${javaClasspath}" com.packetanalyzer.Main --dpi "${inputPcap}" "${outputPcap}" "${RULES_FILE}"`;
-
-    const { exec } = require('child_process');
-    exec(command, (error, stdout, stderr) => {
-        const combinedOutput = stdout + (stderr || '');
-        try {
-            if (fs.existsSync(inputPcap)) fs.unlinkSync(inputPcap);
-            if (fs.existsSync(outputPcap)) fs.unlinkSync(outputPcap);
-        } catch (e) { console.error('Cleanup error', e); }
-
-        if (combinedOutput.includes('Total Packets:')) {
-            const parsedData = parseDpiOutput(combinedOutput);
-            return res.json({ success: true, data: parsedData, raw: combinedOutput });
-        } else {
-            return res.status(500).json({ error: 'Failed to analyze PCAP file', details: stderr || error?.message });
-        }
     });
 });
 
