@@ -198,10 +198,9 @@ app.post('/api/analyze-stream', upload.single('pcapFile'), (req, res) => {
         if (lineBuffer.trim()) processLine(lineBuffer);
 
         // Clean up temp files
-        try {
-            if (fs.existsSync(inputPcap)) fs.unlinkSync(inputPcap);
-            if (fs.existsSync(outputPcap)) fs.unlinkSync(outputPcap);
-        } catch (e) { console.error('Cleanup error', e); }
+        const unlinkCb = (err) => { if (err && err.code !== 'ENOENT') console.error('Cleanup error', err); };
+        fs.unlink(inputPcap, unlinkCb);
+        fs.unlink(outputPcap, unlinkCb);
 
         if (fullOutput.includes('Total Packets:')) {
             const parsed = parseDpiOutput(fullOutput);
