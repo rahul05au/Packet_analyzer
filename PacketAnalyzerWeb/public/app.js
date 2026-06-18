@@ -267,7 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Drop Rate badge
         const dropRateEl = document.getElementById('dropRate');
         if (dropRateEl) {
-            animateValueEl(dropRateEl, 0, data.filtering.dropRate, 1200, 1, '%');
+            const dr = isNaN(data.filtering.dropRate) ? 0 : data.filtering.dropRate;
+            animateValueEl(dropRateEl, 0, dr, 1200, 1, '%');
         }
 
         // ── Ring Chart ────────────────────────────────────────────────
