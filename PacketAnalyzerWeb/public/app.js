@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (d.success) {
                     rulesSaveSuccess.classList.remove('hidden');
                     setTimeout(() => rulesSaveSuccess.classList.add('hidden'), 3000);
-                } else alert('Failed to save rules.');
+                } else showErrorToast('Failed to save rules.');
             })
-            .catch(() => alert('Error saving rules.'))
+            .catch(() => showErrorToast('Error saving rules.'))
             .finally(() => { btnSaveRules.textContent = 'Save Rules'; btnSaveRules.disabled = false; });
     });
 
