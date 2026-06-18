@@ -24,7 +24,7 @@ const upload = multer({ storage });
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 // Set up rules file
 const RULES_FILE = path.join(__dirname, 'rules.txt');
