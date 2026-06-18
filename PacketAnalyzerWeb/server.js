@@ -35,6 +35,9 @@ if (!fs.existsSync(RULES_FILE)) {
 // Rules API endpoints
 app.get('/api/rules', (req, res) => {
     try {
+        if (!fs.existsSync(RULES_FILE)) {
+            return res.json({ success: true, content: "[BLOCKED_IPS]\n\n[BLOCKED_APPS]\n\n[BLOCKED_DOMAINS]\n\n[BLOCKED_PORTS]\n" });
+        }
         const rulesText = fs.readFileSync(RULES_FILE, 'utf8');
         res.json({ success: true, content: rulesText });
     } catch (e) {
