@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const liveLog = document.getElementById('liveLog');
     const loadingStatus = document.getElementById('loadingStatus');
 
+    // ── Table Filters ────────────────────────────────────────────────
+    const pktSearchInput = document.getElementById('pktSearchInput');
+    const pktFilterAction = document.getElementById('pktFilterAction');
+    const pktFilterProto = document.getElementById('pktFilterProto');
+
+    if (pktSearchInput) pktSearchInput.addEventListener('input', applyTableFilters);
+    if (pktFilterAction) pktFilterAction.addEventListener('change', applyTableFilters);
+    if (pktFilterProto) pktFilterProto.addEventListener('change', applyTableFilters);
+
     // ── Navigation ──────────────────────────────────────────────────
     const btnNavUpload = document.getElementById('btnNavUpload');
     const btnNavRules = document.getElementById('btnNavRules');
@@ -290,6 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Utility: Clear dashboard for new scan ────────────────────────
     function clearDashboard() {
         pktRowCount = 0;
+        if (pktSearchInput) pktSearchInput.value = '';
+        if (pktFilterAction) pktFilterAction.value = 'ALL';
+        if (pktFilterProto) pktFilterProto.value = 'ALL';
+
         ['stat-total', 'stat-tcp', 'stat-udp', 'stat-blocked',
             'sum-total', 'sum-class', 'sum-unk'].forEach(id => {
                 const el = document.getElementById(id);
@@ -314,15 +327,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Live Packet Table Row ─────────────────────────────────────────
     function addPacketRow(pkt) {
         const tbody = document.getElementById('packetTableBody');
-        const countEl = document.getElementById('pktTableCount');
         if (!tbody) return;
 
         pktRowCount++;
-        if (countEl) countEl.textContent = pktRowCount;
 
         const isBlocked = pkt.action === 'BLOCKED';
         const tr = document.createElement('tr');
         tr.className = 'pkt-row ' + (isBlocked ? 'pkt-blocked' : 'pkt-forward');
+
+        // Set data attributes for client-side filtering
+        tr.setAttribute('data-src', pkt.src || '');
+        tr.setAttribute('data-dst', pkt.dst || '');
+        tr.setAttribute('data-proto', pkt.proto || '');
+        tr.setAttribute('data-sni', pkt.sni || '');
+        tr.setAttribute('data-app', pkt.app || '');
+        tr.setAttribute('data-action', pkt.action || '');
 
         tr.innerHTML = `
             <td class="pkt-num">${pktRowCount}</td>
@@ -341,9 +360,56 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tbody.children.length >= 200) tbody.removeChild(tbody.firstChild);
         tbody.appendChild(tr);
 
+        // Re-apply filters instantly
+        applyTableFilters();
+
         // Smooth scroll to latest if near bottom
         const wrap = tbody.closest('.packet-table-wrap');
         if (wrap) wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    // ── Apply Table Filters ───────────────────────────────────────────
+    function applyTableFilters() {
+        const query = (pktSearchInput?.value || '').toLowerCase();
+        const actionVal = pktFilterAction?.value || 'ALL';
+        const protoVal = pktFilterProto?.value || 'ALL';
+
+        const rows = document.querySelectorAll('#packetTableBody tr');
+        let visibleCount = 0;
+        let totalCount = rows.length;
+
+        rows.forEach(row => {
+            const src = (row.getAttribute('data-src') || '').toLowerCase();
+            const dst = (row.getAttribute('data-dst') || '').toLowerCase();
+            const sni = (row.getAttribute('data-sni') || '').toLowerCase();
+            const app = (row.getAttribute('data-app') || '').toLowerCase();
+            const action = row.getAttribute('data-action') || '';
+            const proto = row.getAttribute('data-proto') || '';
+
+            const matchesQuery = !query || 
+                src.includes(query) || 
+                dst.includes(query) || 
+                sni.includes(query) || 
+                app.includes(query);
+            const matchesAction = actionVal === 'ALL' || action === actionVal;
+            const matchesProto = protoVal === 'ALL' || proto === protoVal;
+
+            if (matchesQuery && matchesAction && matchesProto) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const countEl = document.getElementById('pktTableCount');
+        if (countEl) {
+            if (query || actionVal !== 'ALL' || protoVal !== 'ALL') {
+                countEl.textContent = `Showing ${visibleCount} of ${totalCount}`;
+            } else {
+                countEl.textContent = `${totalCount}`;
+            }
+        }
     }
 
     // ── Error Toast ───────────────────────────────────────────────────

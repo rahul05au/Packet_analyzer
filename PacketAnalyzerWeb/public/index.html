@@ -182,6 +182,19 @@
                         <span id="pktTableCount">0</span> packets
                     </div>
                 </div>
+                <div class="table-filters">
+                    <input type="text" id="pktSearchInput" placeholder="Search by IP, Domain, App..." class="filter-input">
+                    <select id="pktFilterAction" class="filter-select">
+                        <option value="ALL">All Actions</option>
+                        <option value="FORWARD">Forwarded</option>
+                        <option value="BLOCKED">Blocked</option>
+                    </select>
+                    <select id="pktFilterProto" class="filter-select">
+                        <option value="ALL">All Protocols</option>
+                        <option value="TCP">TCP</option>
+                        <option value="UDP">UDP</option>
+                    </select>
+                </div>
                 <div class="packet-table-wrap">
                     <table class="packet-table" id="packetTable">
                         <thead>
