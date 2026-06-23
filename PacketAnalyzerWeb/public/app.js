@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const liveLog = document.getElementById('liveLog');
     const loadingStatus = document.getElementById('loadingStatus');
 
-    // ── Navigation ──────────────────────────────────────────────────
+   //navigation ──────────────────────────────────────────────────
     const btnNavUpload = document.getElementById('btnNavUpload');
     const btnNavRules = document.getElementById('btnNavRules');
     const rulesSection = document.getElementById('rulesSection');
