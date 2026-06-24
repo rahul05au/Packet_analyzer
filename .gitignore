@@ -7,7 +7,7 @@ PacketAnalyzerJava/build/
 PacketAnalyzerJava/target/
 PacketAnalyzerJava/bin/
 
-# Duplicate/backup folder
+# Duplicate/backup folder 
 PacketAnalyzerJava copy/
 
 # Large test PCAP files (keep small ones, ignore big ones > 1MB)
