@@ -6,7 +6,6 @@ const fs = require('fs');
 
 const app = express();
 const PORT = 3000;
-
 // Set up storage for uploaded pcap files
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
