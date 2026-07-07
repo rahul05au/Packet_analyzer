@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  * Usage:
  *   java -cp . com.packetanalyzer.Main <pcap_file> [max_packets]
  *
- * For DPI engine mode (full pipeline with LB + FP threads):
+ * For DPI engine mode (full pipeline with LB + FP threads): 
  *   java -cp . com.packetanalyzer.Main --dpi <input.pcap> <output.pcap> [rules_file]
  */
 public class Main {
