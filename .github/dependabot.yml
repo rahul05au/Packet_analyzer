@@ -2,6 +2,6 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/PacketAnalyzerWeb"
-    schedule:
+    schedule: 
       interval: "weekly"
  
