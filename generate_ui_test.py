@@ -8,7 +8,7 @@ def generate_test_pcap(filename):
         f.write(struct.pack('<H', 2))          # Major
         f.write(struct.pack('<H', 4))          # Minor
         f.write(struct.pack('<I', 0))          # thiszone
-        f.write(struct.pack('<I', 0))          # sigfigs
+        f.write(struct.pack('<I', 0))       # sigfigs
         f.write(struct.pack('<I', 65535))      # snaplen
         f.write(struct.pack('<I', 1))          # network (Ethernet)
 
