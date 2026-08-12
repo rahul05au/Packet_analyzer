@@ -1,6 +1,6 @@
 # Compiled Java class files
 **/*.class
-
+ 
 # Java build output
 PacketAnalyzerJava/out/
 PacketAnalyzerJava/build/
