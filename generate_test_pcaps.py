@@ -2,7 +2,7 @@
 generate_test_pcaps.py
 Generates two realistic PCAP files for demonstration:
   - youtube_traffic.pcap  (YouTube TLS SNI + DNS + HTTP)
-  - chatgpt_traffic.pcap  (ChatGPT/OpenAI TLS SNI + DNS)
+  - chatgpt_traffic.pcap  (ChatGPT/OpenAI TLS SNI + DNS) 
 
 Packet structure matches exactly what PacketParser.java / SniExtractor.java expects:
   Ethernet (14 B) + IPv4 (20 B) + TCP/UDP (20/8 B) + Payload
