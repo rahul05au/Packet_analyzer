@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.io.*;
 
-/**
+/** 
  * DPI Engine — the main orchestrator.
  *
  * Architecture (mirrors C++ DPIEngine):
